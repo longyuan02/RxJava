@@ -20,18 +20,21 @@ import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.Subject;
 
 /**
  * RxJava
  */
 public class ABSubscriber extends AppCompatActivity {
-    private String TAG = MainActivity.class.getSimpleName();
+    private String TAG = ABSubscriber.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class ABSubscriber extends AppCompatActivity {
 //                observable.subscribe(reader);
 //                ScheduledExecutorService();
 //                Flowable();
+                StartTest();
             }
         });
     }
@@ -157,7 +161,6 @@ public class ABSubscriber extends AppCompatActivity {
                 });
         CompositeDisposable compositeDisposable = new CompositeDisposable();
         compositeDisposable.add(disposable);
-
     }
 
     private void Flowable() {
@@ -218,6 +221,69 @@ public class ABSubscriber extends AppCompatActivity {
                     @Override
                     public void onComplete() {
                         Log.d("TAG", "onComplete");
+                    }
+                });
+    }
+
+    /* 线程切换 */
+    public void StartTest() {
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                Log.e(TAG, "===create: " + Thread.currentThread().getName());
+                emitter.onNext("1");
+            }
+        }).map(new Function<String, Integer>() {
+            @Override
+            public Integer apply(String s) throws Exception {
+                Log.e(TAG, "===String -> Integer: " + Thread.currentThread().getName());
+                return Integer.valueOf(s);
+            }
+        }).flatMap(new Function<Integer, ObservableSource<?>>() {
+            @Override
+            public ObservableSource<?> apply(final Integer integer) throws Exception {
+                Log.e(TAG, "===Integer->Observable: " + Thread.currentThread().getName());
+                return Observable.create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                        Log.e(TAG, "===Observable<String> call: " + Thread.currentThread().getName());
+                        for (int i = 0; i < integer; i++) {
+                            emitter.onNext(i + "");
+                        }
+                        emitter.onComplete();
+                    }
+                });
+            }
+        }).map(new Function<Object, Object>() {
+            @Override
+            public Object apply(Object o) throws Exception {
+                Log.e(TAG, "===String->Long: " + Thread.currentThread().getName());
+                return Long.parseLong(o.toString());
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>() {
+
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        Log.e(TAG, "===onNext: " + Thread.currentThread().getName());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
