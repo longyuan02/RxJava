@@ -173,6 +173,19 @@
                            });
                }</code></pre>
                
+###### 订阅
+[参考文献](https://www.jianshu.com/p/d9da64774f7b)
+```
+subscribeOn 订阅一次生效
+observeOn 被观察者覆盖生效
+```
++ observeOn(AndroidSchedulers.mainThread())全部在主线程工作
++ observeOn(Schedulers.io())子线程执行
+```
+区分好哪些任务在子线程执行,哪些执行必须在主线程刷新
+多个线程调用 如果.flatMap()切换线程,线程切换后,顺位线程保持切换不变 RxJavaThreadChange->setChangeThread
+```
+
 ### ScheduledThreadPoolExecutor 定时任务线程池 -SecondeActivity
 <pre><code>/**
                 * 开关线程池
