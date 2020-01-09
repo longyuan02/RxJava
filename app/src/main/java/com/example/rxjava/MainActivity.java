@@ -2,11 +2,14 @@ package com.example.rxjava;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+
+import com.example.threadpoolexecutor.ThreadMainActivity;
 
 public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler() {
@@ -26,6 +29,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 rxJavaThreadChange.setChangeThread();
+//                Intent intent = new Intent(MainActivity.this, ThreadMainActivity.class);
+                Intent intent = new Intent();
+                intent.setClassName("com.example.rxjava", "com.example.threadpoolexecutor.ThreadMainActivity");
+                intent.putExtra("params", "params");
+                startActivity(intent);
             }
         });
     }

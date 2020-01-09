@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -14,13 +15,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MainActivity extends AppCompatActivity {
+public class ThreadMainActivity extends AppCompatActivity {
     private ThreadPoolExecutor threadPoolExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        String params=getIntent().getStringExtra("params");
+        Toast.makeText(this,params,Toast.LENGTH_SHORT).show();
         ThreadPool();
         threadPoolExecutor = new ThreadPoolExecutor(1, 1000, 50,
                 TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(128),

@@ -305,6 +305,15 @@ observeOn 被观察者覆盖生效
 ```
 newScheduledThreadPool调用的是ScheduledThreadPoolExecutor的构造方法，而ScheduledThreadPoolExecutor继承了ThreadPoolExecutor，构造是还是调用了其父类的构造方法。
 
+### config.gradle配置
+```
+根级目录
+config.gradle
+工程 build.gradle
+apply from: 'config.gradle'
+使用
+rootProject.ext.android.compileSdkVersion
+```
 
 
 
